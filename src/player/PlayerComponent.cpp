@@ -257,6 +257,16 @@ void PlayerComponent::setVideoRectangle(int x, int y, int w, int h)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+void PlayerComponent::setUiOverlayVisible(bool visible)
+{
+  if (m_uiOverlayVisible == visible)
+    return;
+  m_uiOverlayVisible = visible;
+  emit uiOverlayVisibleChanged(visible);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 void PlayerComponent::setQtQuickWindow(QQuickWindow* window)
 {
   PlayerQuickItem* video = window->findChild<PlayerQuickItem*>("video");

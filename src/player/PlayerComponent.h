@@ -49,6 +49,8 @@ public:
   // If you want to wipe everything, use stop().
   Q_INVOKABLE void clearQueue();
 
+  Q_INVOKABLE void setUiOverlayVisible(bool visible);
+
   Q_INVOKABLE virtual void seekTo(qint64 ms);
 
   // Stop playback and clear all queued items.
@@ -194,6 +196,9 @@ Q_SIGNALS:
 
   void onMetaData(const QVariantMap &meta, QUrl baseUrl);
   
+  // True if UI is visible, false if not
+  void uiOverlayVisibleChanged(bool visible);
+  
 private:
   // this is the function actually implemented in the backends. the variantmap contains
   // a few known keys:
@@ -250,6 +255,7 @@ private:
   QString m_currentSubtitleStream;
   QString m_currentAudioStream;
   QRect m_videoRectangle;
+  bool m_uiOverlayVisible = false;
 };
 
 #endif // PLAYERCOMPONENT_H

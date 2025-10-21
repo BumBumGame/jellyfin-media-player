@@ -232,6 +232,7 @@
                 let eventVal = on_off && on_off.detail;
                 if (Array.isArray(eventVal)) eventVal = eventVal[0];
                 // Call player API
+                window.api.player.setUiOverlayVisible(eventVal);
             }
         }
 
