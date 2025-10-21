@@ -222,6 +222,17 @@
             this.onDuration = (duration) => {
                 this._duration = duration;
             };
+
+            /**
+             * @private
+             * @param on_off {boolean} The current State of the OSD (Shown/Hidden)
+            */
+            this.onOSDToggle = (on_off) => {
+                // Check Event Info to ensure compatability
+                let eventVal = on_off && on_off.detail;
+                if (Array.isArray(eventVal)) eventVal = eventVal[0];
+                // Call player API
+            }
         }
 
         currentSrc() {
@@ -496,6 +507,9 @@
             player.updateDuration.disconnect(this.onDuration);
             player.error.disconnect(this.onError);
             player.paused.disconnect(this.onPause);
+
+            //Destroy Eventlistener for OSD Toggle
+            document.removeEventListener("SHOW_VIDEO_OSD", this.onOSDToggle);
         }
 
         /**
@@ -537,6 +551,9 @@
                     player.updateDuration.connect(this.onDuration);
                     player.error.connect(this.onError);
                     player.paused.connect(this.onPause);
+
+                    //Register OSD Toggle not native Jellyfin-Web Event
+                    document.addEventListener("SHOW_VIDEO_OSD", this.onOSDToggle);
                 }
 
                 if (options.fullscreen) {
