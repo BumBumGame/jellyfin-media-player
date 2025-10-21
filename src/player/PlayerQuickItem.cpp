@@ -206,6 +206,11 @@ void PlayerRenderer::render()
 
     QOpenGLFramebufferObject::blitFramebuffer(0, dstRect, blitFbo, QRect(QPoint(0, 0), blitFbo->size()));
   }
+
+  // if OSD and window are visible shedule continues repaints
+  if (m_continuousRepaint && m_window) {
+    m_window->scheduleRenderJob(new RequestRepaintJob(m_window), QQuickWindow::AfterRenderingStage);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +235,25 @@ void PlayerRenderer::onVideoPlaybackActive(bool active)
     m_hAvrtHandle = 0;
   }
 #endif
+
+  // Set continious repaint to false on playback stop due to QT taking over
+  // Set to true if osd ist visible and playback is started.
+  if (!active && m_continuousRepaint) {
+    m_continuousRepaint = false;
+  }else if(active && m_osd_visible){
+    m_continuousRepaint = true;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void PlayerRenderer::onUiOverlayVisibleChanged(bool visible)
+{
+  m_continuousRepaint = visible;
+  m_osd_visible = visible;
+  if (visible && m_window) {
+    // shedule first new UI frame
+    m_window->scheduleRenderJob(new RequestRepaintJob(m_window), QQuickWindow::AfterRenderingStage);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -334,5 +358,6 @@ void PlayerQuickItem::initMpv(PlayerComponent* player)
   m_mpv = player->getMpvHandle();
 
   connect(player, &PlayerComponent::windowVisible, this, &QQuickItem::setVisible);
+  connect(player, &PlayerComponent::uiOverlayVisibleChanged, m_renderer, &PlayerRenderer::onUiOverlayVisibleChanged);
   window()->update();
 }

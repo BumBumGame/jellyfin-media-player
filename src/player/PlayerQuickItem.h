@@ -30,6 +30,7 @@ class PlayerRenderer : public QObject
 
 public slots:
   void onVideoPlaybackActive(bool active);
+  void onUiOverlayVisibleChanged(bool visible);
 
 private:
   static void on_update(void *ctx);
@@ -40,6 +41,9 @@ private:
   HANDLE m_hAvrtHandle;
   QRect m_videoRectangle;
   QOpenGLFramebufferObject* m_fbo;
+
+  bool m_continuousRepaint = false;
+  bool m_osd_visible = false;
 };
 
 class PlayerQuickItem : public QQuickItem
